@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+  </head>
+  <body>
+    <button id="btnToggle">Toggle Pending</button>
+    <div id="divPending">Pending</div>
+    <script>
+      (function() {
+        var pendingInterval = false,
+          div = document.getElementById('divPending'),
+          btn = document.getElementById('btnToggle');
+        console.log(div.innerText);
+        function startPending() {
+          if (div.innerText.length > 13) {
+            div.innerText = 'Pending';
+          }
+          div.innerHTML += '.';
+        }
+        btn.addEventListener('click', function() {
+          if (!pendingInterval) {
+            pendingInterval = setInterval(startPending, 100);
+          } else {
+            clearInterval(pendingInterval);
+            pendingInterval = false;
+          }
+        });
+      })();
+    </script>
+  </body>
+</html>
