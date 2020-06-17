@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>프락시를 활용한 캐시 기능 구현</title>
+</head>
+<body>
+  <h1>프락시를 활용한 캐시 기능 구현</h1>
+  <video style="width:240px" id="video-sm"
+    src="http://media.w3.org/2010/05/bunny/movie.ogv">
+  </video>
+  <video style="width:360px" id="video-md"
+    src="http://media.w3.org/2010/05/bunny/movie.ogv">
+  </video>
+  <video style="width:480px" id="video-lg"
+    src="http://media.w3.org/2010/05/bunny/movie.ogv">
+  </video>
+  <div id="controller">
+    <label for="selectVideo">비디오 사이즈 선택</label>
+    <select id="selectVideo">
+      <option value="video-sm">small</option>
+      <option value="video-md">medium</option>
+      <option value="video-lg">large</option>
+    </select>
+    <button id="play">play</button>
+    <button id="pause">pause</button>
+    <button id="volume-up">volume+</button>
+    <button id="volume-down">volume-</button>
+  </div>
+  <script>
+    (function () {
+      const controller =  document.getElementById('controller');
+      const selectVideo = document.getElementById('selectVideo');
+      
+      let controllVedio = {
+        'play': function (video) {
+          video.play();
+        },
+        'pause': function (video) {
+          video.pause();
+        },
+        'volumeUp': function (video) {
+          if (video.volume <= 0.9) {
+            video.volume += 0.1;
+          } else {
+            video.volume = 1;
+          }
+        },
+        'volumeDown': function (video) {
+          if (video.volume >= 0.1) {
+            video.volume -= 0.1;
+          } else {
+            video.volume = 0;
+          }
+        },
+        'getVideoByValue': function (Value) {
+          return document.getElementById(Value);
+        }
+      };
+
+      let proxyClickEventHandler = (function(target) {
+        let cache = {};
+
+        return function (target) {
+          let video;
+          
+          if (controllVedio.hasOwnProperty(target)) {
+            if (cache.hasOwnProperty(controllVedio.value)) {
+              console.log(controllVedio);
+              video = cache[selectVideo.value];
+            } else {
+              video = controllVedio.getVideoByValue(selectVideo.value);
+              cache[selectVideo.value] = video;
+            }
+            controllVedio[target].call(this, video);
+            console.log(cache);
+          }
+        };
+      } ());
+
+      controller.addEventListener('click', (e) => {
+        const target = e.target || e.srcElement;
+        proxyClickEventHandler(target.id)
+      }, true);
+    }());
+  </script>
+</body>
+</html>

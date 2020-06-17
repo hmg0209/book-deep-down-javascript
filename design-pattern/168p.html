@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>p.168 이벤트 버블링과 캡처링 비교</title>
+    <style>
+      div {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border: 2px solid white;
+      }
+
+      .outside {
+        width: 150px;
+        height: 150px;
+        margin-bottom: 1rem;
+        background-color: rgb(207, 179, 226);
+      }
+
+      .middle {
+        width: 100px;
+        height: 100px;
+        background-color: rgb(163, 124, 189);
+      }
+
+      .inside {
+        position: relative;
+        width: 50px;
+        height: 50px;
+        background-color: rgb(104, 73, 124);
+      }
+
+      .float {
+        position: absolute;
+        left: 150px;
+        width: 50px;
+        height: 50px;
+        background-color: rgb(63, 40, 78);
+      }
+
+      .highlight {
+        background-color: rgb(255, 245, 137);
+      }
+    </style>
+  </head>
+  <body>
+    <h1>p.168 이벤트 버블링과 캡처링 비교</h1>
+    <h2>이벤트 버블링</h2>
+    <p>
+      크롬에서 alert실행 시 적용되는 class의 스타일이 먹지 않는 버그가 있다;;<br>
+      (이유는 모르겠다... 왜 안나오지 ㅠㅠ / 회사 컴퓨터 환경 문제인지 집에서 테스트 필요...)<br>
+      해당 예제는 firefox에서 잘 동작하고 있습니다.
+    </p>
+    <div id="bubbling-outside" class="outside">
+      <div id="bubbling-middle" class="middle">
+        <div id="bubbling-inside" class="inside">
+          <div id="bubbling-float" class="float"></div>
+        </div>
+      </div>
+    </div>
+
+    <h2>이벤트 캡처링</h2>
+    <div id="capturing-outside" class="outside">
+      <div id="capturing-middle" class="middle">
+        <div id="capturing-inside" class="inside">
+          <div id="capturing-float" class="float"></div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      (function () {
+        let bubbleList = [
+          'bubbling-outside',
+          'bubbling-middle',
+          'bubbling-inside',
+          'bubbling-float',
+        ];
+
+        bubbleList.forEach((bubble) => {
+          document
+            .getElementById(bubble)
+            .addEventListener('click', function () {
+              console.log(this);
+              this.classList.toggle('highlight');
+              alert(bubble);
+              this.classList.toggle('highlight');
+            });
+        });
+
+        let captureList = [
+          'capturing-outside',
+          'capturing-middle',
+          'capturing-inside',
+          'capturing-float',
+        ];
+
+        captureList.forEach((capture) => {
+          document
+            .getElementById(capture)
+            .addEventListener('click', function () {
+              console.log(this);
+              this.classList.toggle('highlight');
+              alert(capture);
+              this.classList.toggle('highlight');
+            }, true);
+        });
+      })();
+    </script>
+  </body>
+</html>
