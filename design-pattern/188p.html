@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -65,8 +65,6 @@
         if (controllVedio.hasOwnProperty(target)) {
           video = controllVedio.getVideoByValue(selectVideo.value);
           controllVedio[target].call(this, video);
-          //[Q] 객체 안의 메소드인데 왜 .으로 접근 불가능한거지???
-          //controllVedio.target(video);
         }
       };
 
