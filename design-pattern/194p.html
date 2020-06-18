@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>프락시 패턴을 이용한 비동기 요청/응답 처리 이슈 해소</title>
+  </head>
+  <body>
+    <h1>프락시 패턴을 이용한 비동기 요청/응답 처리 이슈 해소</h1>
+    <p>
+      [Q] 서버가 없어서 일단 작동이 안되는 것 같은데,<br>
+      작동되게 하려면 어떤 처리가 필요한거지?
+    </p>
+    <div id="chatlog"></div>
+    <form action="" id="formChat">
+      <input type="text" id="inputChat">
+      <input type="submit" value="send">
+    </form>
+    <script>
+      (function() {
+        const divChatLog = document.getElementById('chatLog');
+        const formChat = document.getElementById('formChat');
+        const inputChat = document.getElementById('inputChat');
+        let isPending = false;
+        let requestChat = [];
+
+        formChat.addEventListener('submit', () => {
+          proxySendChat(inputChat.value);
+          input.value = '';
+
+          //[Q] 여기 아래 코드는 왜 false를 지정한거지...?
+          event.returnValue = false;
+          return false;
+        });
+
+        function proxySendChat (chat) {
+          if (isPending === ture) {
+            requesetChat.push(chat);
+          } else {
+            sendChatRequest([chat]);
+          }
+        }
+
+        function sendChatRequest (chats) {
+          let xhr = new XMLHttpRequest();
+          xhr.open('POST', './send_chat.php', true);
+          xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+          isPending = true;
+
+          xhr.onload = function () {
+            let pChat = ducument.createElement('p');
+            pChat.innerHTML = xhr.responseText;
+            divChatLog.appendChild(pChat);
+
+            if (requestChat.length > 0) {
+              sendChatRequest(requestChat);
+              requestChat = [];
+            } else {
+              isPending = false;
+            }
+          };
+          xhr.send('chats' + encodeURIComponent(JSON.stringify(chats)));
+        }
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>프록시 패턴: 로그기록을 위한 래퍼</title>
+</head>
+<body>
+  <h1>프록시 패턴: 로그기록을 위한 래퍼</h1>
+  <script>
+    (function() {
+    let car = {
+      beep() {
+        alert('빵-');
+      },
+      brake() {
+        alert('끼-익,');
+      },
+      accelerator() {
+        alert('부릉-부릉-');
+      }
+    };
+
+    function wrap(func, wrapper) {
+      return function() {
+        let args = [func].concat(Array.from(arguments));
+        return wrapper.apply(this, args);
+      };
+    }
+
+    function wrapObject(obj, wrapper) {
+      console.log('aaa');
+      let props;
+      for(prop in obj) {
+        if (obj.hasOwnProperty(prop) && typeof obj[prop] === 'function') {
+          obj[prop] = wrap(obj[prop], wrapper);
+        }
+      }
+    }
+
+    //wrapper 함수 호출
+    wrapObject(car, function (func) {
+      //console.log(func.name + 'has been invoked');
+
+      func.apply(this, Array.from(arguments).slice(1));
+    });
+    
+    // 메서드 호출
+    // car.accelerator('aaa');
+    // car.beep();
+    // car.brake();
+  }());
+  </script>
+</body>
+</html>

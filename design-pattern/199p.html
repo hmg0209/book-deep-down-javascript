@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>기존 함수와 동일하게 활용 가능한 래퍼</title>
+</head>
+<body>
+  <h1>기존 함수와 동일하게 활용 가능한 래퍼</h1>
+  <p>도저히가 이 로직 이해가 가지 않는다 ㅠㅠㅠㅠㅠ</p>
+  <script>
+    (function() {
+      function wrap(func, wrapper) {
+        return function() {
+          let args = [func].concat(Array.from(arguments));
+          return wrapper.apply(this, args);
+        }
+      }
+
+      function existingFunction() {
+        console.log('이미 존재하는 함수가 인자와 함께 호출되었다');
+        console.log(`인자: ${arguments}`);
+      }
+
+      let wrapperedFunction = wrap(existingFunction, function (func) {
+        console.log('래퍼 함수가 인자와 함께 호출되었다');
+        console.log(`인자: ${arguments}`);
+        func.apply(this, Array.from(arguments).slice(1));
+      });
+
+      console.log('1. 존재하는 함수가 호출되었다');
+      existingFunction('인자1', '인자2', '인자3');
+
+      console.log('2. 래퍼 함수가 호출되었다');
+      wrapperedFunction('인자1', '인자2', '인자3');
+      
+      (function() {
+        var existingFunction = wrapperedFunction;
+        console.log("\3. 래퍼 존재하는 함수가 호출됨");
+        existingFunction('인자1', '인자2', '인자3');
+      }());
+
+    } ());
+  </script>
+</body>
+</html>
